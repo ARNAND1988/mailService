@@ -1,0 +1,50 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd">		
+		
+         <bean id="appProperties"
+    class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+    <property name="locations">
+        <list>
+            <value>classpath:constants.properties</value>
+        </list>
+    </property>
+</bean>
+        
+      
+        <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+			<property name="host" value="${mail.smtp.host}" />
+			<property name="port" value="${mail.smtp.port}" />		
+			<property name="javaMailProperties">
+			   <props>
+		       	      <prop key="mail.smtp.auth">${mail.smtp.auth}</prop>
+		       	      <prop key="mail.smtp.starttls.enable">${mail.smtp.starttls.enable}</prop>
+		       	      <prop key="mail.mime.charset">${mail.mime.charset}</prop>
+		       	   </props>
+			</property>
+		</bean>
+     
+        <bean id="mailService" class="com.mailservice.service.MailService">
+         	<property name="mailSender" ref="mailSender"/> 
+        	<property name="fromAddress" value="${mail.fromAddress}" />
+        	<property name="freemarkerConfig" ref="freemarkerConfig"/> 	
+        </bean>
+        
+       <!-- freemarker config -->
+	 <bean id="freemarkerConfig" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
+	  <property name="templateLoaderPath" value="/WEB-INF/freemarker/"/>
+	  <property name="freemarkerSettings">
+            <props>
+                <prop key="url_escaping_charset">UTF-8</prop>
+            </props>
+        </property>
+	</bean> 
+	   <bean id="freemarkerViewResolver" class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
+        <property name="suffix"><value>.ftl</value></property>
+        <property name="exposeSpringMacroHelpers"><value>true</value></property>
+    </bean>
+	
+ 	
+</beans>
